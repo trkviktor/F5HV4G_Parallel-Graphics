@@ -14,4 +14,4 @@ Then it calculates the maximum likelihood function in two ways, sequentially and
 ## PYTHON | *Speed difference between sequential and parallel interpolations*
 
 This program generates random points between [-5;5] then using sequential and parallel interpolations to interpolate it,then it splits it into equal amounts depending on the available threads of the user's cpu.
-Finally,it measures the time it took to interpolate the points between the to methods and the user can compare it after.
+Finally,it measures the time it took to interpolate the points between the two methods and the user can compare it after.
