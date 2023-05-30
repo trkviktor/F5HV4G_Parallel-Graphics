@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "utils.h"
+#include "gameobjects.h"
 
 #include <obj/model.h>
 
@@ -11,28 +12,20 @@
 
 typedef struct Scene
 {
+
+    Gameobjects gameobjects;
+
     Model maze;
     GLuint maze_texture_id;
 
-    Model marker;
-    GLuint marker_texture_id;
-    float marker_z;
+    int is_map_open;
+    vec3 last_position;
 
-    Model key;
-    vec3 key_position;
-    vec3 key_rotation;
-    GLuint key_texture_id;
-
-    Model gate;
-    vec3 gate_position;
-
-    GLuint battery_texture_id;
+    bool is_door_open;
+    bool is_key_picked_up;
 
     vec3 light_position;
     float light_intensity;
-
-    bool is_map_open;
-    vec3 last_position;
 
 } Scene;
 

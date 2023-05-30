@@ -1,4 +1,5 @@
 #include "app.h"
+#include "gameobjects.h"
 
 #include <SDL2/SDL_image.h>
 
@@ -49,6 +50,8 @@ void init_app(App *app, int width, int height)
     init_scene(&(app->scene));
 
     app->is_running = true;
+
+    app->last_position = (vec3){3.67, 3.471, 1.0};
 }
 
 void init_opengl()
@@ -147,8 +150,8 @@ void handle_app_events(App *app)
                 if (app->scene.light_intensity >= 0.0f)
                     app->scene.light_intensity -= 0.1f;
                 break;
-            case SDL_SCANCODE_M:
-                open_map(app, &(app->camera));
+            case SDL_SCANCODE_E:
+                open_door(app);
                 break;
             default:
                 break;
@@ -164,6 +167,9 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_A:
             case SDL_SCANCODE_D:
                 set_camera_side_speed(&(app->camera), 0);
+                break;
+            case SDL_SCANCODE_M:
+                open_map(app, &(app->camera));
                 break;
             default:
                 break;
@@ -204,12 +210,31 @@ void update_app(App *app)
 
     update_camera(&(app->camera), elapsed_time);
     update_scene(&(app->scene));
-    app->scene.light_position = (vec3){app->camera.position.x, app->camera.position.y, 1.0f};
-    app->scene.key_position = (vec3){app->camera.newPosition.x, app->camera.newPosition.y, 1.0f};
-    app->scene.key_rotation = (vec3){app->camera.rotation.x, app->camera.rotation.y, app->camera.rotation.z};
-    app->scene.marker_z = (sin(current_time * 2) / 4) + 4;
 
-    
+    app->scene.light_position = (vec3){app->camera.position.x, app->camera.position.y, 1.0f};
+
+    app->scene.gameobjects.key_position = (vec3){app->camera.newPosition.x, app->camera.newPosition.y, 1.0f};
+    app->scene.gameobjects.key_rotation = (vec3){app->camera.rotation.x, app->camera.rotation.y, app->camera.rotation.z};
+
+    app->scene.gameobjects.marker_z = (sin(current_time * 2) / 8) + 2.9;
+
+    if(!app->scene.is_key_picked_up)
+        app->scene.gameobjects.key_marker_x = (sin(current_time * 2) / 8) + 2.9;
+    else
+        app->scene.gameobjects.key_marker_x = -3.0f;
+
+    app->scene.gameobjects.key_rotation_z = (current_time) * 120;
+
+    if (app->scene.is_door_open && app->scene.gameobjects.gate_position.z > 0.0f)
+    {
+        app->scene.gameobjects.gate_position.z -= 0.01f;
+    }
+    else if (app->scene.is_door_open)
+    {
+        app->scene.is_door_open = false;
+    }
+
+    pickup_key(app, &(app->camera));
 }
 
 void render_app(App *app)
@@ -229,7 +254,6 @@ void render_app(App *app)
     }
 
     SDL_GL_SwapWindow(app->window);
-
 }
 void destroy_app(App *app)
 {
@@ -248,14 +272,14 @@ void destroy_app(App *app)
 
 void open_map(App *app, Camera *camera)
 {
-    if (app->is_map_open)
+    if (app->is_map_open == 1)
     {
         glEnable(GL_FOG);
         app->scene.light_intensity = 0.0f;
-        app->is_map_open = false;
-        app->scene.is_map_open = false;
+        app->scene.is_map_open = 0;
         camera->position = app->last_position;
         camera->rotation = app->last_rotation;
+        app->is_map_open = 0;
     }
     else
     {
@@ -265,10 +289,26 @@ void open_map(App *app, Camera *camera)
         app->last_rotation = (vec3){camera->rotation.x, camera->rotation.y, camera->rotation.z};
         app->scene.last_position = (vec3){camera->position.x, camera->position.y, camera->position.z};
 
-        app->is_map_open = true;
-        app->scene.is_map_open = true;
+        app->is_map_open = 1;
+        app->scene.is_map_open = 1;
 
         camera->position = (vec3){-10.0f, 0.0f, 7.0f};
         camera->rotation = (vec3){-30.0f, 0.0f, 0.0f};
+    }
+}
+
+void open_door(App *app)
+{
+    if (app->scene.is_key_picked_up)
+    {
+        app->scene.is_door_open = true;
+    }
+}
+
+void pickup_key(App *app, Camera *camera)
+{
+    if(abs(app->scene.gameobjects.pickup_key_position.x - camera->position.x) < 0.5f && abs(app->scene.gameobjects.pickup_key_position.y - camera->position.y) < 0.5f){
+        app->scene.is_key_picked_up = true;
+        app->scene.gameobjects.pickup_key_position = (vec3){-3.0f, -3.0f, -3.0f}; 
     }
 }

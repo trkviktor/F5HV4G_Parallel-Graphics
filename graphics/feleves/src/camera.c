@@ -117,7 +117,7 @@ void show_texture_preview()
 
 int check_collisions(vec3 newposition)
 {
-    printf("x: %f, y: %f\n", newposition.x, newposition.y);
+    //printf("x: %f, y: %f\n", newposition.x, newposition.y);
 
     if((newposition.x < -4.2 || (newposition.x > 4.2))){
         return 1;

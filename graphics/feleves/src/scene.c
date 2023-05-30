@@ -2,26 +2,20 @@
 #include <obj/info.h>
 #include <obj/load.h>
 #include <obj/draw.h>
+#include "gameobjects.h"
 
 void init_scene(Scene *scene)
 {
     load_model(&(scene->maze), "assets/models/maze.obj");
-    load_model(&(scene->marker), "assets/models/marker.obj");
-    load_model(&(scene->key), "assets/models/key.obj");
-    load_model(&(scene->gate), "assets/models/gate.obj");
+    
+
+    init_gameobjects(&(scene->gameobjects));
 
     scene->maze_texture_id = load_texture("assets/textures/maze.png");
-    scene->marker_texture_id = load_texture("assets/textures/marker.png");
-    scene->key_texture_id = load_texture("assets/textures/maze.png");
-
     scene->light_position = (vec3){0.0, 0.0, 0.0};
     scene->light_intensity = 0.2f;
-
-    scene->marker_z = 5.0f;
-    scene->is_map_open = false;
-    scene->last_position = (vec3){0.0, 0.0, 0.0};
-
-    scene->gate_position = (vec3){3.087181f, 2.485501f, 0.9f};
+    scene->is_map_open = 0;
+    scene->is_key_picked_up = false;
 
     float fog[4] = {0.5f, 0.5f, 0.5f, 0.5f};
 
@@ -34,7 +28,7 @@ void init_scene(Scene *scene)
     glFogf(GL_FOG_START, 0);
     glFogf(GL_FOG_END, 3.5);
 
-    //scene->is_door_open = false;
+    scene->is_door_open = false;
 }
 void set_lighting(Scene *scene)
 {
@@ -80,7 +74,24 @@ void update_scene(Scene *scene)
 
 void render_scene(const Scene *scene)
 {
+    set_lighting(scene);
 
+    render_maze(scene);
+    render_gameobjects(&(scene->gameobjects));
+
+    
+    if (scene->is_key_picked_up){
+        render_key_in_hand(&(scene->gameobjects));
+    }
+
+    if (scene->is_map_open)
+        render_player_marker(&(scene->gameobjects));
+        
+        
+    set_lighting(scene);
+}
+
+void render_maze(const Scene *scene){
     set_lighting(scene);
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, scene->maze_texture_id);
@@ -90,85 +101,6 @@ void render_scene(const Scene *scene)
     // draw_origin();
     draw_model(&(scene->maze));
     glPopMatrix();
-
-    glPushMatrix();
-    float marker_ambient_light[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    float marker_diffuse_light[] = {50.0f, 50.0f, 50.0f, 1.0f};
-    float marker_specular_light[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    float marker_position[] = {-3.1f, -1.9f, (scene->marker_z) - 2, 1.0f};
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT, marker_ambient_light);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, marker_diffuse_light);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, marker_specular_light);
-    glLightfv(GL_LIGHT0, GL_POSITION, marker_position);
-
-    glBindTexture(GL_TEXTURE_2D, scene->marker_texture_id);
-    glTranslatef(-3.1, -1.9, scene->marker_z);
-    glScalef(0.5, 0.5, 0.5);
-    glRotatef(90, 1, 0, 0);
-    draw_model(&(scene->marker));
-    glPopMatrix();
-
-    glPushMatrix();
-    glBindTexture(GL_TEXTURE_2D, scene->key_texture_id);
-    glTranslatef(scene->key_position.x, scene->key_position.y, scene->key_position.z);
-    glRotatef(scene->key_rotation.z, 0, 0, 1);
-    glRotatef(-scene->key_rotation.x, 0, 1, 0);
-    glTranslatef(0.4f, -0.15f, -0.1f);
-    glRotatef(90, 0, 1, 0);
-    glRotatef(-100, 1, 0, 0);
-    // glScalef(0.1, 0.1, 0.1);
-    draw_model(&(scene->key));
-    glPopMatrix();
-
-    glPushMatrix();
-    glBindTexture(GL_TEXTURE_2D, scene->key_texture_id);
-    glTranslatef(scene->gate_position.x, scene->gate_position.y, scene->gate_position.z);
-    glRotatef(90, 0, 1, 0);
-    glRotatef(90, 0, 0, 1);
-    glScalef(0.1, 0.12, 0.3);
-    draw_model(&(scene->gate));
-    glPopMatrix();
-
-    if (scene->is_map_open)
-    {
-        glDisable(GL_FOG);
-        glPushMatrix();
-        float map_marker_ambient_light[] = {0.0f, 0.0f, 0.0f, 1.0f};
-        float map_marker_diffuse_light[] = {50.0f, 50.0f, 50.0f, 1.0f};
-        float map_marker_specular_light[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        float map_marker_position[] = {scene->last_position.x, scene->last_position.y, scene->marker_z - 2, 1.0f};
-
-        glLightfv(GL_LIGHT0, GL_AMBIENT, map_marker_ambient_light);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, map_marker_diffuse_light);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, map_marker_specular_light);
-        glLightfv(GL_LIGHT0, GL_POSITION, map_marker_position);
-
-        glBindTexture(GL_TEXTURE_2D, scene->marker_texture_id);
-        glTranslatef(scene->last_position.x, scene->last_position.y, scene->marker_z - 1);
-        glScalef(0.5, 0.5, 0.5);
-        glRotatef(90, 1, 0, 0);
-        draw_model(&(scene->marker));
-        glPopMatrix();
-    }
-    set_lighting(scene);
 }
 
-void draw_origin()
-{
-    glBegin(GL_LINES);
 
-    glColor3f(1, 0, 0);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 0);
-
-    glColor3f(0, 1, 0);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 1, 0);
-
-    glColor3f(0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 1);
-
-    glEnd();
-}

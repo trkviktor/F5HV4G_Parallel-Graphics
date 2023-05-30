@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "utils.h"
+#include "gameobjects.h"
 
 #include <SDL2/SDL.h>
 
@@ -20,7 +21,7 @@ typedef struct App
     double uptime;
     Camera camera;
     Scene scene;
-    bool is_map_open;
+    int is_map_open;
     vec3 last_position;
     vec3 last_rotation;
 } App;
