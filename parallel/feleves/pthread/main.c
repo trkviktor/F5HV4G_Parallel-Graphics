@@ -12,7 +12,6 @@ typedef struct {
     double variance;
 } ThreadData;
 
-double likelihood(double x, double mean, double variance);
 double max_likelihood_sequential(double *data, int n);
 void *max_likelihood_parallel(void *arg);
 
@@ -90,13 +89,6 @@ int main(int argc, char *argv[])
     free(data);
 
     return 0;
-}
-
-double likelihood(double x, double mean, double variance)
-{
-    double exponent = -0.5 * pow((x - mean), 2) / variance;
-    double coef = 1.0 / sqrt(2 * M_PI * variance);
-    return coef * exp(exponent);
 }
 
 double max_likelihood_sequential(double *data, int n)
