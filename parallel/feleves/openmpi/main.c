@@ -1,6 +1,6 @@
-// Floyd-Warshall algoritmus
+// Floyd-Warshall algorithm
 
-// Import header files for program
+// Import header files for programy
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,7 +8,6 @@
 #include <omp.h>
 
 // Define the number of nodes in the graph
-#define N 1200
 
 // Define minimum function that will be used later on to calcualte minimum values between two numbers
 #ifndef min
@@ -17,12 +16,28 @@
 
 // Define matrix of size N * N to store distances between nodes
 // Initialize all distances to zero
-int distance_matrix[N][N] = {0};
+
 
 int main(int argc, char *argv[])
 {
+    if (argc != 3)
+    {
+        printf("Usage: %s <Number of threads> <Number of N>\n", argv[0]);
+        return 1;
+    }
+
+    int num_threads = atoi(argv[1]);
+    int N = atoi(argv[2]);
     int nthreads;
     int src, dst, middle;
+    int **distance_matrix;
+
+    // Allocate memory for the distance matrix
+    distance_matrix = (int **)malloc(N * sizeof(int *));
+    for (int i = 0; i < N; i++)
+    {
+        distance_matrix[i] = (int *)malloc(N * sizeof(int));
+    }
 
     // Initialize the graph with random distances
     for (src = 0; src < N; src++)
@@ -57,7 +72,7 @@ int main(int argc, char *argv[])
     double time = omp_get_wtime() - start_time;
     printf("Total time for sequential (in sec):%.2f\n", time);
 
-    for (nthreads = 1; nthreads <= 10; nthreads++)
+    for (nthreads = 1; nthreads <= num_threads; nthreads++)
     {
         // Define different number of threads
         omp_set_num_threads(nthreads);
