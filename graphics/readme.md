@@ -1,3 +1,2 @@
 ## Graphics | *First Person Puzzle Game*
-The point of the game is to find the secret that was hidden very long ago which includes finding keys,figuring out some logical puzzles using objects found around in the area.
-Example: picture in the wall contains the first 2 digits of a 4 length numerical code then 1 digit is barely readable carved into the wall/door and the last digit is hidden under a chair.
+The point of the game is to escape the maze by completing puzzles(like finding a key that is hidden) then getting to the exit.
