@@ -13,7 +13,7 @@ void init_scene(Scene *scene)
 
     scene->maze_texture_id = load_texture("assets/textures/maze.png");
     scene->light_position = (vec3){0.0, 0.0, 0.0};
-    scene->light_intensity = 0.2f;
+    scene->light_intensity = 100.2f;
     scene->is_map_open = 0;
     scene->is_key_picked_up = false;
 

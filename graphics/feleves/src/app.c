@@ -234,6 +234,7 @@ void update_app(App *app)
         app->scene.is_door_open = false;
     }
 
+    printf("x: %f , y: %f \n", app->camera.position.x, app->camera.position.y);
     pickup_key(app, &(app->camera));
 }
 
@@ -307,7 +308,7 @@ void open_door(App *app)
 
 void pickup_key(App *app, Camera *camera)
 {
-    if(abs(app->scene.gameobjects.pickup_key_position.x - camera->position.x) < 0.5f && abs(app->scene.gameobjects.pickup_key_position.y - camera->position.y) < 0.5f){
+    if(abs(app->scene.gameobjects.pickup_key_position.x - camera->position.x) < 0.2f && abs(app->scene.gameobjects.pickup_key_position.y - camera->position.y) < 0.2f){
         app->scene.is_key_picked_up = true;
         app->scene.gameobjects.pickup_key_position = (vec3){-3.0f, -3.0f, -3.0f}; 
     }
