@@ -16,13 +16,17 @@ void init_gameobjects(Gameobjects *gameobjects)
 
     gameobjects->gate_position = (vec3){3.087181f, 2.485501f, 0.9f};
     gameobjects->last_position = (vec3){0.0, 0.0, 0.0};
+
+    gameobjects->is_help_open = false;
+    gameobjects->is_game_over = false;
 }
 
 void render_gameobjects(const Gameobjects *gameobjects)
 {
-    render_marker(gameobjects);
+    //render_marker(gameobjects);
     render_key_pickup(gameobjects);
-    render_gate(gameobjects);
+    render_gate(gameobjects, gameobjects->gate_position);
+    render_gate(gameobjects, (vec3){3.124926f, 1.240040f, gameobjects->gate_position.z});
 }
 
 void render_marker(const Gameobjects *gameobjects)
@@ -72,11 +76,11 @@ void render_key_pickup(const Gameobjects *gameobjects)
     glPopMatrix();
 }
 
-void render_gate(const Gameobjects *gameobjects)
+void render_gate(const Gameobjects *gameobjects, vec3 position)
 {
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, gameobjects->key_texture_id);
-    glTranslatef(gameobjects->gate_position.x, gameobjects->gate_position.y, gameobjects->gate_position.z);
+    glTranslatef(position.x, position.y, position.z);
     glRotatef(90, 0, 1, 0);
     glRotatef(90, 0, 0, 1);
     glScalef(0.1, 0.12, 0.3);
@@ -103,4 +107,54 @@ void render_player_marker(const Gameobjects *gameobjects)
     glRotatef(90, 1, 0, 0);
     draw_model(&(gameobjects->marker));
     glPopMatrix();
+}
+
+void render_help()
+{
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_FOG);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3f(1, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, load_texture("assets/textures/help.jpg"));
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3d(-2, 1.5, -3);
+    glTexCoord2f(1, 0);
+    glVertex3d(2, 1.5, -3);
+    glTexCoord2f(1, 1);
+    glVertex3d(2, -1.5, -3);
+    glTexCoord2f(0, 1);
+    glVertex3d(-2, -1.5, -3);
+    glEnd();
+    glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
+}
+
+void render_game_over()
+{
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_FOG);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glColor3f(1, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, load_texture("assets/textures/gameover.jpg"));
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3d(-2, 1.5, -3);
+    glTexCoord2f(1, 0);
+    glVertex3d(2, 1.5, -3);
+    glTexCoord2f(1, 1);
+    glVertex3d(2, -1.5, -3);
+    glTexCoord2f(0, 1);
+    glVertex3d(-2, -1.5, -3);
+    glEnd();
+    glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
 }

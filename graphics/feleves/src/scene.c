@@ -69,12 +69,16 @@ void set_material(const Material *material)
 
 void update_scene(Scene *scene)
 {
-    // printf("last position: x:%f y:%f z:%f\n", scene->last_position.x, scene->last_position.y, scene->last_position.z);
+    
 }
 
 void render_scene(const Scene *scene)
 {
     set_lighting(scene);
+
+    if(scene->gameobjects.is_help_open){
+        render_help();
+    }
 
     render_maze(scene);
     render_gameobjects(&(scene->gameobjects));
@@ -86,6 +90,10 @@ void render_scene(const Scene *scene)
 
     if (scene->is_map_open)
         render_player_marker(&(scene->gameobjects));
+
+    if (scene->gameobjects.is_game_over){
+        render_game_over();
+    }
         
         
     set_lighting(scene);

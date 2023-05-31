@@ -153,6 +153,9 @@ void handle_app_events(App *app)
             case SDL_SCANCODE_E:
                 open_door(app);
                 break;
+            case SDL_SCANCODE_F1:
+                open_help(app);
+                break;
             default:
                 break;
             }
@@ -234,8 +237,15 @@ void update_app(App *app)
         app->scene.is_door_open = false;
     }
 
-    printf("x: %f , y: %f \n", app->camera.position.x, app->camera.position.y);
+    //printf("x: %f , y: %f \n", app->camera.position.x, app->camera.position.y);
     pickup_key(app, &(app->camera));
+
+
+    app->camera.is_door_open = app->scene.is_door_open;
+
+    app->scene.gameobjects.is_game_over = app->camera.is_game_over;
+
+
 }
 
 void render_app(App *app)
@@ -276,7 +286,7 @@ void open_map(App *app, Camera *camera)
     if (app->is_map_open == 1)
     {
         glEnable(GL_FOG);
-        app->scene.light_intensity = 0.0f;
+        //app->scene.light_intensity = 0.0f;
         app->scene.is_map_open = 0;
         camera->position = app->last_position;
         camera->rotation = app->last_rotation;
@@ -289,6 +299,8 @@ void open_map(App *app, Camera *camera)
         app->last_position = (vec3){camera->position.x, camera->position.y, camera->position.z};
         app->last_rotation = (vec3){camera->rotation.x, camera->rotation.y, camera->rotation.z};
         app->scene.last_position = (vec3){camera->position.x, camera->position.y, camera->position.z};
+        app->scene.gameobjects.last_position = (vec3){camera->position.x, camera->position.y, camera->position.z};
+
 
         app->is_map_open = 1;
         app->scene.is_map_open = 1;
@@ -311,5 +323,16 @@ void pickup_key(App *app, Camera *camera)
     if(abs(app->scene.gameobjects.pickup_key_position.x - camera->position.x) < 0.2f && abs(app->scene.gameobjects.pickup_key_position.y - camera->position.y) < 0.2f){
         app->scene.is_key_picked_up = true;
         app->scene.gameobjects.pickup_key_position = (vec3){-3.0f, -3.0f, -3.0f}; 
+    }
+}
+
+void open_help(App *app){
+    if (app->scene.gameobjects.is_help_open)
+    {
+        app->scene.gameobjects.is_help_open = false;
+    }
+    else
+    {
+        app->scene.gameobjects.is_help_open = true;
     }
 }

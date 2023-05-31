@@ -6,6 +6,8 @@
 #include "utils.h"
 #include "gameobjects.h"
 
+#include <windows.h>
+
 #include <obj/model.h>
 
 #include <stdbool.h>
@@ -26,6 +28,9 @@ typedef struct Scene
 
     vec3 light_position;
     float light_intensity;
+
+
+
 
 } Scene;
 

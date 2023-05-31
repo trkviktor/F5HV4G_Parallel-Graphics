@@ -31,6 +31,9 @@ typedef struct Gameobjects
 
     vec3 last_position;
 
+    bool is_help_open;
+    bool is_game_over;
+
 } Gameobjects;
 
 
@@ -44,9 +47,13 @@ void render_key_in_hand(const Gameobjects *gameobjects);
 
 void render_key_pickup(const Gameobjects *gameobjects);
 
-void render_gate(const Gameobjects *gameobjects);
+void render_gate(const Gameobjects *gameobjects, vec3 position);
 
 void render_player_marker(const Gameobjects *gameobjects);
+
+void render_help();
+
+void render_game_over();
 
 
 

@@ -15,6 +15,8 @@ typedef struct Camera
     vec3 speed;
     vec3 newPosition;
     bool is_preview_visible;
+    bool is_door_open;
+    bool is_game_over;
 } Camera;
 
 /**
@@ -47,7 +49,7 @@ void set_camera_speed(Camera* camera, double speed);
  */
 void set_camera_side_speed(Camera* camera, double speed);
 
-int check_collisions(vec3 newposition);
+int check_collisions(vec3 newposition, Camera *camera);
 
 int calc_collision(vec3 newposition, float posX, float posY, float boxSizeX, float boxSizeY);
 

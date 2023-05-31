@@ -4,7 +4,7 @@
 
 #include <math.h>
 
-void init_camera(Camera* camera)
+void init_camera(Camera *camera)
 {
     camera->position.x = 3.67;
     camera->position.y = 3.471;
@@ -17,9 +17,11 @@ void init_camera(Camera* camera)
     camera->speed.z = 0.0;
 
     camera->is_preview_visible = false;
+
+    camera->is_game_over = false;
 }
 
-void update_camera(Camera* camera, double time)
+void update_camera(Camera *camera, double time)
 {
     double angle;
     double side_angle;
@@ -32,7 +34,7 @@ void update_camera(Camera* camera, double time)
     camera->newPosition.x += cos(side_angle) * camera->speed.x * time;
     camera->newPosition.y += sin(side_angle) * camera->speed.x * time;
 
-    if (check_collisions(camera->newPosition) == 0)
+    if (check_collisions(camera->newPosition, camera) == 0)
     {
         camera->position.x = camera->newPosition.x;
         camera->position.y = camera->newPosition.y;
@@ -43,10 +45,9 @@ void update_camera(Camera* camera, double time)
     camera->position.x += cos(side_angle) * camera->speed.x * time;
     camera->position.y += sin(side_angle) * camera->speed.x * time;
     */
-    
 }
 
-void set_view(const Camera* camera)
+void set_view(const Camera *camera)
 {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -56,34 +57,38 @@ void set_view(const Camera* camera)
     glTranslatef(-camera->position.x, -camera->position.y, -camera->position.z);
 }
 
-void rotate_camera(Camera* camera, double horizontal, double vertical)
+void rotate_camera(Camera *camera, double horizontal, double vertical)
 {
     camera->rotation.z += horizontal;
     camera->rotation.x += vertical;
 
-    if (camera->rotation.z < 0) {
+    if (camera->rotation.z < 0)
+    {
         camera->rotation.z += 360.0;
     }
 
-    if (camera->rotation.z > 360.0) {
+    if (camera->rotation.z > 360.0)
+    {
         camera->rotation.z -= 360.0;
     }
 
-    if (camera->rotation.x < 0) {
+    if (camera->rotation.x < 0)
+    {
         camera->rotation.x += 360.0;
     }
 
-    if (camera->rotation.x > 360.0) {
+    if (camera->rotation.x > 360.0)
+    {
         camera->rotation.x -= 360.0;
     }
 }
 
-void set_camera_speed(Camera* camera, double speed)
+void set_camera_speed(Camera *camera, double speed)
 {
     camera->speed.y = speed;
 }
 
-void set_camera_side_speed(Camera* camera, double speed)
+void set_camera_side_speed(Camera *camera, double speed)
 {
     camera->speed.x = speed;
 }
@@ -115,25 +120,26 @@ void show_texture_preview()
     glEnable(GL_DEPTH_TEST);
 }
 
-int check_collisions(vec3 newposition)
+int check_collisions(vec3 newposition, Camera *camera)
 {
-    //printf("x: %f, y: %f\n", newposition.x, newposition.y);
+    printf("x: %f, y: %f\n", newposition.x, newposition.y);
 
-    if((newposition.x < -4.2 || (newposition.x > 4.2))){
+    if ((newposition.x < -4.2 || (newposition.x > 4.2)))
+    {
         return 1;
     }
-    
+
     /* map Y edges */
     if ((newposition.y < -4.2) || (newposition.y > 4.2))
         return 1;
 
-    //walls
+    // walls
     if (calc_collision(newposition, -3.1, -1.9, 1.6, 0.25) == 1)
         return 1;
 
     if (calc_collision(newposition, 3.159234, -0.726366, 0.25, 1.6) == 1)
         return 1;
-    
+
     if (calc_collision(newposition, 1.880600, -1.840456, 1.6, 0.25) == 1)
         return 1;
 
@@ -164,6 +170,15 @@ int check_collisions(vec3 newposition)
         return 1;
     if (calc_collision(newposition, -1.854306, 0.605255, 1.5, 0.25) == 1)
         return 1;
+
+    if (!(camera->is_door_open)){
+        if (calc_collision(newposition, 3.087181f, 2.485501f, 0.25, 1.2) == 1)
+            return 1;
+    }
+
+    if (calc_collision(newposition, -0.057596, 3.070655, 0.25, 1.5) == 1){
+        camera->is_game_over = true;
+    }
     // No collision found
     return 0;
 }
@@ -176,4 +191,3 @@ int calc_collision(vec3 newposition, float posX, float posY, float boxSizeX, flo
             return 1;
     return 0;
 }
-
