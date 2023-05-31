@@ -230,7 +230,7 @@ void update_app(App *app)
 
     if (app->scene.is_door_open && app->scene.gameobjects.gate_position.z > 0.0f)
     {
-        app->scene.gameobjects.gate_position.z -= 0.01f;
+        app->scene.gameobjects.gate_position.z -= 1.0f * elapsed_time;
     }
     else if (app->scene.is_door_open)
     {

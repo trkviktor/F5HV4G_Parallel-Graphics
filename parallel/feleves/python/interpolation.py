@@ -12,13 +12,10 @@ def generate_points(n):
     return x, y
 
 def interpolate(x, y):
-    # interpolate the points using a polynomial of degree 3
     p = np.polyfit(x, y, 3)
-    # generate 50 points between the min and max x values
     xp = np.linspace(x.min(), x.max(), 50)
-    # evaluate the polynomial at the generated points
     yp = np.polyval(p, xp)
-    # return the generated points and values
+
     return xp, yp
 
 async def parallel_interpolate(x, y, loop, num_threads):

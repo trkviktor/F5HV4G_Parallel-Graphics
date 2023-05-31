@@ -7,7 +7,6 @@
 #include <time.h>
 #include <omp.h>
 
-// Define the number of nodes in the graph
 
 // Define minimum function that will be used later on to calcualte minimum values between two numbers
 #ifndef min
@@ -44,10 +43,8 @@ int main(int argc, char *argv[])
     {
         for (dst = 0; dst < N; dst++)
         {
-            // Distance from node to same node is 0. So, skipping these elements
             if (src != dst)
             {
-                // Distances are generated to be between 0 and 19
                 distance_matrix[src][dst] = rand() % 20;
             }
         }

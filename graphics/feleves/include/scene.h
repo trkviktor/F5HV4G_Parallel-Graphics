@@ -28,6 +28,7 @@ typedef struct Scene
 
     vec3 light_position;
     float light_intensity;
+    
 
 
 
