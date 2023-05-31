@@ -6,7 +6,6 @@ import multiprocessing as mp
 import time
 
 def generate_points(n):
-    # generate n random points in the range [-5, 5]
     x = np.random.uniform(-5, 5, n)
     y = np.random.uniform(-5, 5, n)
     return x, y
@@ -37,14 +36,11 @@ if __name__ == '__main__':
     num_threads = int(input("Enter the number of threads: "))
 
     x, y = generate_points(n)
-
-    # interpolate the points sequentially
     start_time = time.time()
     sequential_interp = interpolate(x, y)
     sequential_time = time.time() - start_time
     print("Sequential time:", sequential_time)
 
-    # interpolate the points in parallel
     loop = asyncio.get_event_loop()
     start_time = time.time()
     results = loop.run_until_complete(parallel_interpolate(x, y, loop, num_threads))
@@ -52,17 +48,13 @@ if __name__ == '__main__':
     parallel_time = time.time() - start_time
     print("Parallel time:", parallel_time)
 
-    # plot the interpolated curves sequentially
     plt.plot(sequential_interp[0], sequential_interp[1], label='Sequential Interpolation')
 
-    # plot the interpolated curves in parallel
     for xp, yp in results:
         plt.plot(xp, yp, label='Parallel Interpolation')
 
-    # label the x and y axes
     plt.xlabel('X')
     plt.ylabel('Y')
 
-    # display the plot
     plt.legend()
     plt.show()

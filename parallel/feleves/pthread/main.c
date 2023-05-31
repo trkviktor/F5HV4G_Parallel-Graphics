@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Generate some random data
     srand(time(NULL));
     for (int i = 0; i < num_samples; i++)
     {
